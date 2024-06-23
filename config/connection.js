@@ -22,3 +22,5 @@ module.exports.get = function () {
   return state.db;
 
 };
+
+// mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority
