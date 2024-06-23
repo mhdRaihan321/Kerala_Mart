@@ -1,0 +1,195 @@
+<section>
+    <div class="container mt-5">
+        <form action="" id="checkout-form">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <h2>Enter Delivery Details</h2>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile</label>
+                        <input class="form-control" type="tel" name="mobile" pattern="[1-9][0-9]{9}" maxlength="10" id="mobile" required>
+                        <small id="mobileHelp" class="form-text text-muted">Please enter a 10-digit mobile number starting with a non-zero digit.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input class="form-control" type="text" name="address" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pincode">Pin Code</label>
+                        <input class="form-control" type="text" name="pincode" id="pincode" required>
+                    </div>
+                    <input type="hidden" name="userId" value="{{user._id}}">
+                </div>
+
+                <div class="col-md-4">
+                    <div class="container mt-5 ml-5 checkout">
+                        <h5>Total Amount: Rs.{{total}}</h5>
+                        <hr>
+                        <div class="payment">
+                            <p>Payment Method</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymethod" id="paymethodCOD" value="COD" checked>
+                                <label class="form-check-label" for="paymethodCOD">COD</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymethod" id="paymethodONLINE" value="ONLINE">
+                                <label class="form-check-label" for="paymethodONLINE">Online Payment</label>
+                            </div>
+                            <button class="btn btn-primary mt-3 float-right" type="submit">Check Out</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    $(document).ready(() => {
+        // Prevent form submission on Enter key press
+        $('#checkout-form').on('keydown', (e) => {
+            if (e.keyCode === 13) { // 13 is the Enter key code
+                e.preventDefault();
+                alert('Press the "Check Out" button to proceed.');
+            }
+        });
+
+        // Handle form submission using AJAX
+        $("#checkout-form").submit((e) => {
+            e.preventDefault();
+
+            // Get selected payment method
+            const paymentMethod = $('input[name="paymethod"]:checked').val();
+
+            // Confirm order placement with selected payment method
+            const confirmationMessage = `Are you sure you want to place the order with ${paymentMethod} payment method?`;
+
+            if (confirm(confirmationMessage)) {
+                $.ajax({
+                    url: '/place-order',
+                    method: 'post',
+                    data: $('#checkout-form').serialize(),
+                    success: (response) => {
+                        if (response.CodSuccess) {
+                            location.href = '/0o0r0d0e0r0P0l0a0c0e0d';
+                        } else {
+                            razorPayPayment(response);
+                        }
+                    },
+                    error: (err) => {
+                        console.error('Error placing order:', err);
+                        alert('Error placing order. Please try again.');
+                    }
+                });
+            } else {
+                // User cancelled the order
+                console.log('Order placement cancelled.');
+            }
+        });
+    });
+
+    function razorPayPayment(order) {
+        var options = {
+            "key": "rzp_test_HSGXHXFayRD319", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR.
+            "currency": "INR",
+            "name": "kerala Mart",
+            "description": "Order Payment",
+            "image": "https://stockton.pythonanywhere.com/static/images/Kerala_Mart.jpg",
+            "order_id": order.id, // Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+                verifyPayment(response, order);
+            },
+            "prefill": {
+                "name": "",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#007bff"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+
+    function verifyPayment(payment, order) {
+        $.ajax({
+            url: '/verify-payment',
+            method: 'post',
+            data: {
+                payment,
+                order
+            },
+            success: (response) => {
+                if(response.status){
+                    location.href = '/0o0r0d0e0r0P0l0a0c0e0d';
+                }
+                // Redirect to order success page or show success message
+            },
+            error: (err) => {
+                console.error('Error verifying payment:', err  ,"Try Again");
+                alert('Payment verification failed. Please contact support. , Try Again');
+                var rzp1 = new Razorpay(options);
+            }
+        });
+    }
+</script>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 960px;
+    }
+
+    .mt-5 {
+        margin-top: 3rem !important;
+    }
+
+    .checkout {
+        background-color: #f3f0f0;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment {
+        padding-bottom: 16px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        border-radius: 25px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="radio"] {
+        margin-right: 8px;
+    }
+
+    .form-check-label {
+        font-size: 0.875rem;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+</style>

@@ -1,0 +1,15 @@
+.btn .badge {
+    position: relative;
+    padding: 4px;
+    color: black;
+    font-size: medium;
+    top: -9px;
+}
+  .btn-outline-warning {
+    color: #ffc107;
+    border-color: #ffc107;
+  }
+  .btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: #fff;
+  }

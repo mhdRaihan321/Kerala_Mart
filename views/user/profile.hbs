@@ -1,0 +1,45 @@
+<!-- profile.hbs (Profile View) -->
+<h3 class="text-center mt-4">Profile</h3>
+<section class="container profile-section py-4">
+                <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
+            <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
+          </a>
+  <div class="container">
+    {{#if UserInfo}}
+      <div class="profile-card shadow-sm p-4 rounded">
+        <h4 class="profile-item"><strong>Name:</strong> {{UserInfo.name}}</h4>
+        <h4 class="profile-item"><strong>Email:</strong> {{UserInfo.email}}</h4>
+        <h4 class="profile-item">
+          <strong>Mobile:</strong> 
+          {{#if UserInfo.mobile}}
+            {{UserInfo.mobile}}
+          {{else}}
+            <a href="" class="text-primary">Mail at mhdraihan383@gmail.com</a>
+          {{/if}}
+        </h4>
+        <div class="text-center mt-4">
+          <a href="/edituserinfo/{{UserInfo._id}}" class="btn btn-primary">Edit User Details</a>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</section>
+
+<style>
+  .profile-section {
+    background-color: #f9f9f9;
+  }
+  .profile-card {
+    background: #e9e3e3;
+    max-width: 600px;
+    margin: auto;
+    border-radius: 10px;
+  }
+  .profile-item {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  .profile-item strong {
+    color: #555;
+  }
+</style>

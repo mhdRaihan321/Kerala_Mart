@@ -1,0 +1,45 @@
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card mt-5">
+          <div class="card-header text-center">
+            <h1>Login</h1>
+          </div>
+          <div class="card-body">
+            {{#if loginError}}
+              <div class="alert alert-danger" role="alert">
+                {{loginError}}
+              </div>
+            {{/if}}
+            <form action="/0a0d0m0i0n0/login" method="POST">
+              <div class="mb-3">
+                <label for="identifier" class="form-label">Name, Email, or Mobile:</label>
+                <input type="text" class="form-control" id="identifier" name="identifier" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+              </div>
+            </form>
+            <div class="text-center mt-3">
+                <a href="/0a0d0m0i0n0/signup">Create a Account ?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+    integrity="sha384-pzjw8f+ua7Kw1TIqTwEmOz75IhP/gnRAf4JYZZnGA/+QK6ZQPZ6fw+6A1Wk6Y5oq" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgwQ0q9Fjgydrc3qj1D+19VcOQIB8cICPDomYm1m0B4KnP07Nlg" crossorigin="anonymous"></script>
+

@@ -1,0 +1,109 @@
+<section class="SignUp">
+  <div class="row">
+    <div class="col-md-6 m-auto">
+      <div class="container mt-5">
+        <div class="form-container">
+          <h2 class="form-title text-center">Create New Account</h2>
+          <form action="/signup" method="post">
+            {{#if error}}
+            <div class="toast align-items-center text-bg-danger border-0 fade show" role="alert" aria-live="assertive"
+              aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  {{error}}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                  aria-label="Close"></button>
+              </div>
+            </div>
+            {{else}}
+            <div class="row">
+            </div>
+            {{/if}}
+
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" />
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input name="email" type="email" class="form-control" id="exampleInputEmail1"
+                aria-describedby="emailHelp" />
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputMobile" class="form-label">Mobile</label>
+              <input name="mobile" type="text" pattern="[1-9][0-9]{9}" maxlength="10" class="form-control"
+                id="exampleInputMobile" aria-describedby="mobileHelp" required />
+              <div id="mobileHelp" class="form-text">Please enter a 10-digit mobile number starting with a non-zero
+                digit.</div>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input name="password" type="password" class="form-control" id="exampleInputPassword1" />
+            </div>
+
+            <div class="mb-3 form-check">
+              <label class="form-check-label" for="exampleCheck1"><a href="/login">Already Have an Account?</a></label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+  }
+
+
+  .form-container {
+    background-color: #f3f0f0;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 28px 35px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .toast {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1050;
+  }
+
+  .form-check-label a {
+    text-decoration: none;
+    color: #007bff;
+  }
+
+  .form-check-label a:hover {
+    color: #0056b3;
+  }
+</style>

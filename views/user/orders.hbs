@@ -1,0 +1,68 @@
+<!-- orders.handlebars -->
+<section>
+  {{#if orders.length}}
+  <div class="container mt-5">
+              <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
+            <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
+          </a>
+    <h1>Your Orders</h1>
+    <table class="table mt-5 "id="productsTable">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Date</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Address</th>
+          <th scope="col">Mobile</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Payment</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orders}}
+        <tr>
+          <th scope="row">{{@index}}</th>
+          <td>{{formatDate this.createdAt}}</td>
+          <td>
+            {{#each this.products}}
+              <p>{{this.productName}}</p>
+            {{/each}}
+          </td>
+          <td>
+            {{#each this.products}}
+              <p>{{this.quantity}}</p>
+            {{/each}}
+          </td>
+          <td>{{this.deliveryDetails.address}}</td>
+          <td>{{this.deliveryDetails.mobile}}</td>
+          <td>{{this.total}}₹</td>
+          <td>{{this.paymentMethod}}</td>
+          <td>{{this.status}}</td>
+          <td>
+            {{#if (isCancelled this.status)}}
+            <span style="color: red;font-weight: bold;">Cancelled Item</span>
+            {{else}}
+            <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  <div style="margin-top: 100px; display: flex; align-items: center; flex-direction: column;" class="row">
+    <h1 style="font-size: xx-large; font-weight: bold;" class="text-center">Order is empty</h1>
+    <br>
+    <a style="max-width: 140px;" href="/" class="btn btn-primary text-center">Back To Home</a>
+  </div>
+  {{/if}}
+</section>
+<script>
+$(document).ready( function () {
+    $('#productsTable').DataTable();
+} );
+</script>

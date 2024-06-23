@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Orders</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>All Orders</h1>
+    <table class="table mt-5">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Date</th>
+          <th scope="col">Products</th>
+          <th scope="col">Delivery Name</th>
+          <th scope="col">Address</th>
+          <th scope="col">Pincode</th>
+          <th scope="col">Mobile</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Payment</th>
+          <th scope="col">Status</th>
+          <th scope="col">More Info</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orders}}
+        <tr>
+          <th scope="row">{{@index}}</th>
+          <td>{{formatDate this.createdAt}}</td>
+          <td>
+            {{#each this.productsInfo}}
+            <div class="product-info">
+              <img src="{{this.productImageUrl}}" alt="{{this.productName}}" class="product-image">
+              <p>{{this.productMainName}} ({{this.quantity}})</p>
+            </div>
+            {{/each}}
+          </td>
+          <td>{{this.deliveryDetails.name}}</td>
+          <td>{{this.deliveryDetails.address}}</td>
+          <td>{{this.deliveryDetails.pincode}}</td>
+          <td>{{this.deliveryDetails.mobile}}</td>
+          <td>{{this.total}}</td>
+          <td>{{this.paymentMethod}}</td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown{{@index}}"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{this.status}}
+              </button>
+              <div class="dropdown-menu" aria-labelledby="statusDropdown{{@index}}">
+                <a class="dropdown-item" href="#" onclick="updateOrderStatus('{{this._id}}', 'Shipped')">Shipped</a>
+                <a class="dropdown-item" href="#" onclick="updateOrderStatus('{{this._id}}', 'Delivered')">Delivered</a>
+              </div>
+            </div>
+          </td>
+          <td>
+            <a href="/0a0d0m0i0n0/productdetailoforder/{{this._id}}" class="btn btn-primary">More Info</a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bootstrap JS bundle (Popper.js and Bootstrap JS) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function updateOrderStatus(orderId, status) {
+      fetch(`/0a0d0m0i0n0/update-order/${orderId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Failed to update order status');
+          alert('Failed to update order status. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error updating order status:', error);
+        alert('Error updating order status. Please try again.');
+      });
+    }
+  </script>
+
+  <style>
+    .product-info {
+      display: flex;
+      align-items: center;
+    }
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+  </style>
+</body>
+</html>

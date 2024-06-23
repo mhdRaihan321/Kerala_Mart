@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>More Info of Order</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h3>More Info</h3>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th scope="col">Product Image</th>
+          <th scope="col">Product Name</th>
+          <th scope="col">Product Main Name</th>
+          <th scope="col">Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each moreInfo}}
+        <tr>
+          <td>
+            <img src="{{this.productImageUrl}}" alt="{{this.productName}}" class="product-image">
+          </td>
+          <td>{{this.productName}}</td>
+          <td>{{this.productMainName}}</td>
+          <td>{{this.quantity}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <a href="/0a0d0m0i0n0/allorders" class="btn btn-primary">Back to All Orders</a>
+  </div>
+
+  <!-- Bootstrap JS bundle (Popper.js and Bootstrap JS) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+  </style>
+</body>
+</html>
