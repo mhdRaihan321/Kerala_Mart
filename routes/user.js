@@ -16,23 +16,21 @@ const authenticateUser = (req, res, next) => {
 
 
 /* GET home page. */
-router.get('/', async (req, res) => {
-  try {
-    const user = req.session.user;
-    console.log('User: ', user);
-
-    let cartCount = null;
-    if (user) {
-      cartCount = await userHelper.getCartCount(user._id);
-    }
-
-    const products = await Product.find({}); // Assuming getAllProducts() is a wrapper around Product.find()
-
-    res.render('user/view-products', { products, admin: false, user, cartCount });
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).send('Error fetching products');
+router.get('/',async (req, res) => {
+  let user = req.session.user;
+  console.log('User : ' + user);
+  let cartCount = null
+  if (req.session.user) {
+    cartCount= await userHelper.getCartCount(req.session.user._id)
   }
+  Product.getAllProducts()
+    .then(products => {
+      res.render('user/view-products', { products, admin: false, user , cartCount});
+    })
+    .catch(error => {
+      console.error('Error fetching products:', error);
+      res.status(500).send('Error fetching products');
+    });
 });
 
 
