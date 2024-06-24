@@ -54,7 +54,7 @@ db.connect((err) => {
 
 // Define routes
 app.use('/', userRouter);
-app.use('/admin', adminRouter); // Assuming admin routes are prefixed with '/admin'
+app.use('/0a0d0m0i0n0', adminRouter); // Assuming admin routes are prefixed with '/admin'
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
