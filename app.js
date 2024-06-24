@@ -9,6 +9,7 @@ const MongoStore = require('connect-mongo');
 const fileUpload = require('express-fileupload');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
+const db = require('./config/connection');
 const hbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const app = express();
@@ -42,6 +43,13 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: mongoUrl }),
   cookie: { maxAge: 60000 }
 }));
+db.connect((err) => {
+  if (err) {
+    console.log("Connection Error: " + err);
+  } else {
+    console.log("Database Connected to port 27017");
+  }
+});
 
 app.use('/', userRouter);
 app.use('/0a0d0m0i0n0', adminRouter);
