@@ -41,7 +41,11 @@ app.use(session({
   store: MongoStore.create({ 
     mongoUrl: process.env.MONGO_URL || 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
   }),
+<<<<<<< HEAD
   cookie: { maxAge: 600000 }
+=======
+  cookie: { maxAge: 6000000 }
+>>>>>>> 55e6d591a43294ca140fd77dc2b6b8f6888b273b
 }));
 
 // Connect to MongoDB
