@@ -1,3 +1,4 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -9,8 +10,14 @@ const fileUpload = require('express-fileupload');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const hbs = require('express-handlebars');
-const db = require('./config/connection');
+const mongoose = require('mongoose');
 const app = express();
+
+// MongoDB connection
+const mongoUrl = process.env.MONGO_URL;
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 // View engine setup
 app.engine('hbs', hbs.engine({
@@ -29,22 +36,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
 app.use(session({
-  secret: 'raihan',
+  secret: 'yourSecret',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({
-    mongoUrl: 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
-  }),
+  store: MongoStore.create({ mongoUrl: mongoUrl }),
   cookie: { maxAge: 60000 }
 }));
-
-db.connect((err) => {
-  if (err) {
-    console.log("Connection Error: " + err);
-  } else {
-    console.log("Database Connected to port 27017");
-  }
-});
 
 app.use('/', userRouter);
 app.use('/0a0d0m0i0n0', adminRouter);
