@@ -339,22 +339,33 @@ module.exports ={
                 $push: {
                   productId: "$products.item",
                   quantity: "$products.quantity",
-                  productName: "$productDetails.name"
+                  productName: "$productDetails.mainname"
                 }
               }
             }
+          },
+          {
+            $project: {
+              _id: 1,
+              deliveryDetails: 1,
+              userId: 1,
+              paymentMethod: 1,
+              total: 1,
+              status: 1,
+              createdAt: 1,
+              products: 1
+            }
           }
         ]).exec();
+  
         console.log("Orders of the User in getUserOrders: ", JSON.stringify(orders, null, 2));
-        const order = await Order.find({ userId: new ObjectId(userId) }).exec();
-        console.log("Direct Database Query:", order);
         resolve(orders);
       } catch (error) {
         console.error("Error fetching user orders:", error);
         reject(error);
       }
     });
-  },   
+  },
   getOrderProducts: (orderId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -628,6 +639,37 @@ module.exports ={
     } catch (error) {
       console.error('Error fetching delivery details:', error);
       throw error; // Propagate the error to handle in calling function
+    }
+  },
+  verifyUserEmail: async (userId, email) => {
+    try {
+      const updatedUser = await User.updateOne({ _id: userId, email: email }, { $set: { emailVerified: true } });
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating email verification status:', error);
+      throw new Error('Error updating email verification status');
+    }
+  },
+  GetUserInfoFromEmail : async (email) => {
+    try {
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      // Return user information
+      return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        verified: user.verified,
+        // Add any other fields you need
+      };
+    } catch (error) {
+      console.error('Error getting user info from email:', error);
+      throw error;
     }
   },
 

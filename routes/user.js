@@ -1,18 +1,208 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/Product');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const userHelper = require('../models/user-helper');
+require('dotenv').config();
+const Product = require('../models/Product');
 const Handlebars = require('handlebars');
 
 const authenticateUser = (req, res, next) => {
   if (req.session.user && req.session.user) {
     req.user = req.session.user; // Make user information available in the request object
-    console.log(req.session.user._id);
     next();
   } else {
     res.redirect('/login');
   }
 };
+
+const otpStore = {}; // Store OTPs in memory for demonstration. Use a database in production.
+
+const transporter = nodemailer.createTransport({
+  service: process.env.EMAIL_SERVICE || 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: process.env.EMAIL_PORT || 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+const generateOTP = () => {
+  return crypto.randomInt(100000, 999999).toString();
+};
+
+router.get('/profile/verifyemail', authenticateUser, (req, res) => {
+  let user = req.session.user;
+  let useremail = req.session.user.email;
+  console.log("Email : ",useremail);
+  res.render('user/email-verification' ,{user, useremail});
+});
+
+router.post('/send-otp', authenticateUser, async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).send('Email is required');
+  }
+
+  const otp = generateOTP();
+  const expires = Date.now() + 300000; // OTP expires in 5 minutes
+
+
+
+  const userInfo = await userHelper.GetUserInfoFromEmail(email);
+
+  
+  let User_name = userInfo.name 
+  let User_Mobile_No = userInfo.mobile
+  console.log('User_Name', User_name);
+  console.log('User_Mobile', User_Mobile_No);
+  
+  otpStore[email] = { otp, expires };
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Your OTP For Email Verification',
+    html: `
+      <div  style="font-family: Arial, sans-serif; text-align: center;max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+        <div style="text-align: center;">
+          <img src="https://stockton.pythonanywhere.com/static/images/IconKM-removebg-preview.png" alt="Brand Logo" style="max-width: 200px; margin-bottom: 10px;">
+        </div>
+        <h2 style="color: #007bff; text-align: center;">Your OTP Is ${otp}</h2>
+        <p style="font-size: 16px;">Dear ${User_name},</p>
+        <p style="font-size: 16px;">Please use this code to verify your email address.</p>
+        <p style="font-size: 16px;"> OTP is valid for 5 minutes</p>
+        <p style="font-size: 16px;"> OTP  for Your Email Verification is: <strong style="font-size: 18px; color: #007bff;">${otp}</strong></p>
+        <p style="font-size: 16px;">Your Details</p>
+        <p style="font-size: 16px;"> Name : ${User_name}</p>
+          <p style="font-size: 16px;"> Email : ${email}</p>
+          <p style="font-size: 16px;"> Mobile No : ${User_Mobile_No}</p>
+          <p style="font-size: 16px;"> If Not Sent a Mail at mhdraihan383@gmail.com</p>
+        <p style="font-size: 16px;">Thank you!</p>
+        <p style="font-size: 16px;">Best regards,<br>Your App Team</p>
+        <div style="text-align: center; margin-top: 20px;">
+          <img src="https://via.placeholder.com/400x100?&text=Thank%20You" alt="Decorative Image" style="max-width: 100%; border-radius: 5px;">
+        </div>
+      </div>
+    `
+  };
+  
+  
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.render('user/otp-verification', { email });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).send('Error sending email');
+  }
+});
+
+router.post('/verify-otp', authenticateUser, async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).send('Email and OTP are required');
+  }
+
+  const storedOtpData = otpStore[email];
+
+  if (!storedOtpData) {
+    return res.status(400).send('Invalid or expired OTP');
+  }
+
+  const { otp: storedOtp, expires } = storedOtpData;
+
+  if (Date.now() > expires) {
+    delete otpStore[email];
+    return res.status(400).send('OTP has expired');
+  }
+
+  if (storedOtp !== otp) {
+    return res.status(400).send('Invalid OTP');
+  }
+
+  // Update user email verification status in database
+  try {
+    // Assuming req.session.user._id is the userId of the logged-in user
+    await userHelper.verifyUserEmail(req.session.user._id, email);
+    // Assuming otpStore is used to store and validate OTPs
+    delete otpStore[email]; // Clear OTP from storage after verification
+
+    res.send('OTP verified successfully');
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Route to handle OTP resend
+router.get('/resend-otp/:email', async (req, res) => {
+  const { email } = req.params; // Get email from URL parameter
+  console.log("Resending OTP to:", email);
+
+  try {
+    // Generate a new OTP
+    const newOTP = generateOTP();
+
+    const userInfo = await userHelper.GetUserInfoFromEmail(email);
+
+  
+    let User_name = userInfo.name 
+    let User_Mobile_No = userInfo.mobile
+    console.log('User_Name', User_name);
+    console.log('User_Mobile', User_Mobile_No);
+
+    // Update user's OTP in your storage (example with an in-memory store)
+    otpStore[email] = {
+      otp: newOTP,
+      expires: Date.now() + 300000, // OTP expires in 5 minutes (300000 milliseconds)
+    };
+
+    // TODO: Implement logic to send the new OTP to the user via email
+    // Example using nodemailer (ensure you have set up nodemailer properly)
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'ReSended OTP For Email Verification',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width:  600px; text-align: center;margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+          <div style="text-align: center;">
+            <img src="https://stockton.pythonanywhere.com/static/images/IconKM-removebg-preview.png" alt="Brand Logo" style="max-width: 200px; margin-bottom: 10px;">
+          </div>
+          <h2 style="color: #007bff; text-align: center;">New OTP For Enail Verification Is ${newOTP}</h2>
+          <p style="font-size: 16px;">Dear ${User_name},</p>
+          <p style="font-size: 16px;">Please use this code to verify your email address.</p>
+          <p style="font-size: 16px;"> OTP is valid for 5 minutes</p>
+          <p style="font-size: 16px;">OTP code for Your Email Verification is: <strong style="font-size: 18px; color: #007bff;">${newOTP}</strong></p>
+          <p style="font-size: 16px;"> Your Details.</p>
+          <p style="font-size: 16px;"> Name : ${User_name}</p>
+          <p style="font-size: 16px;"> Email : ${email}</p>
+          <p style="font-size: 16px;"> Mobile No : ${User_Mobile_No}</p>
+          <p style="font-size: 16px;"> If Not Sent a Mail at mhdraihan383@gmail.com</p>
+          <p style="font-size: 16px;">Thank you!</p>
+          <p style="font-size: 16px;">Best regards,<br>Kerala Mart</p>
+          <div style="text-align: center; margin-top: 20px;">
+            <img src="https://via.placeholder.com/400x100?&text=Thank%20You" alt="Decorative Image" style="max-width: 100%; border-radius: 5px;">
+          </div>
+        </div>
+      `
+    };
+    
+    
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+
+    // Respond to the client that OTP has been resent successfully
+    res.send('OTP resent successfully');
+  } catch (error) {
+    console.error('Error resending OTP:', error);
+    res.status(500).send('Internal server error');
+  }
+});
 
 
 /* GET home page. */
@@ -387,8 +577,6 @@ router.get('/product-details/:id',authenticateUser, async (req,res)=>{
   console.log('Product Detils Got 323', productDetailsView);
   res.render('user/product-details-view',{user:req.session.user , productDetailsView, cartCount})
 })
-
-
 
 
 

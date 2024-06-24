@@ -11,6 +11,7 @@ const MongoStore = require('connect-mongo');
 const fileUpload = require('express-fileupload');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
+const emailOtpRoutes = require('./routes/emailverifyer');
 const hbs = require('express-handlebars');
 const db = require('./config/connection');
 const app = express();
@@ -40,7 +41,7 @@ app.use(session({
   store: MongoStore.create({ 
     mongoUrl: process.env.MONGO_URL || 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
   }),
-  cookie: { maxAge: 60000 }
+  cookie: { maxAge: 600000 }
 }));
 
 // Connect to MongoDB
@@ -55,6 +56,7 @@ db.connect((err) => {
 // Define routes
 app.use('/', userRouter);
 app.use('/0a0d0m0i0n0', adminRouter); // Assuming admin routes are prefixed with '/admin'
+app.use('/emailOtp', emailOtpRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

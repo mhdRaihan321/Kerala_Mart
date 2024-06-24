@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   mobile: { type: Number, required: true },
   password: { type: String, required: true },
+  emailVerified: { type: Boolean, default: false }, // New field for email verification
 });
 
 const User = mongoose.model('User', userSchema);

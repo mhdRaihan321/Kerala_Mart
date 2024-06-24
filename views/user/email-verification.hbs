@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .profile-section {
+      background-color: #f9f9f9;
+      padding: 20px 0;
+    }
+    .container {
+      background: #e9e3e3;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    .btn-primary:focus {
+      box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <h3 class="text-center mt-4">Email Verification</h3>
+  <section class="container profile-section">
+    <div class="container">
+      <form action="/send-otp" method="POST" class="form-group">
+        <label for="email">Enter your email to receive an OTP:</label>
+        <input type="email" name="email" id="email" class="form-control" value="{{useremail}}" required>
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

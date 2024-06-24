@@ -2,12 +2,12 @@
 <section>
   {{#if orders.length}}
   <div class="container mt-5">
-              <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
-            <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
-          </a>
-    <h1>Your Orders</h1>
-    <table class="table mt-5 "id="productsTable">
-      <thead>
+    <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
+      <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
+    </a>
+    <h1 class="text-center mb-4">Your Orders</h1>
+    <table class="table table-striped table-hover mt-5" id="productsTable">
+      <thead class="thead-dark">
         <tr>
           <th scope="col">No</th>
           <th scope="col">Date</th>
@@ -43,7 +43,7 @@
           <td>{{this.status}}</td>
           <td>
             {{#if (isCancelled this.status)}}
-            <span style="color: red;font-weight: bold;">Cancelled Item</span>
+            <span class="text-danger font-weight-bold">Cancelled Item Refund Is Going On</span>
             {{else}}
             <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a>
             {{/if}}
@@ -54,15 +54,82 @@
     </table>
   </div>
   {{else}}
-  <div style="margin-top: 100px; display: flex; align-items: center; flex-direction: column;" class="row">
-    <h1 style="font-size: xx-large; font-weight: bold;" class="text-center">Order is empty</h1>
+  <div class="row" style="margin-top: 100px; display: flex; align-items: center; flex-direction: column;">
+    <h1 class="text-center font-weight-bold" style="font-size: xx-large;">Order is empty</h1>
     <br>
     <a style="max-width: 140px;" href="/" class="btn btn-primary text-center">Back To Home</a>
   </div>
   {{/if}}
 </section>
+
 <script>
 $(document).ready( function () {
     $('#productsTable').DataTable();
-} );
+});
 </script>
+
+<style>
+  div.dt-container select.dt-input {
+    padding: 4px;
+    margin-right: 10px;
+}
+  div.dt-container .dt-search input {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: transparent;
+    color: inherit;
+    margin-left: 8px;
+  }
+  .container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow:1px 10px 4px 13px rgb(240 2 2 / 10%);
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: #343a40;
+  }
+
+  .table {
+    margin-top: 20px;
+  }
+
+  .thead-dark th {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+  }
+
+  .text-danger {
+    color: #dc3545 !important;
+  }
+
+  .font-weight-bold {
+    font-weight: bold !important;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+
+  .text-dark {
+    color: #343a40 !important;
+  }
+</style>

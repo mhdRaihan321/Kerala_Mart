@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    .profile-section {
+      background-color: #f9f9f9;
+    }
+            .headerofuser{
+            display: none;
+        }
+    .container {
+      background: #e9e3e3;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h3 class="text-center mt-4">OTP Verification</h3>
+  <section class="container profile-section py-4">
+    <div class="container">
+      <form action="/verify-otp" method="POST" id="otpForm" class="form-group">
+        <p>OTP Sent to Your Email : {{email}} <a href="profile/verifyemail">Not You ?</a></p>
+        <label for="otp">Enter the OTP :</label>
+        <input type="text" name="otp" id="otp" class="form-control" required>
+        <input type="hidden" name="email" value="{{email}}">
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary mr-2">Verify OTP</button>
+          <a href="#" id="resendOTP" class="btn btn-secondary">Resend OTP</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    $(document).ready(function() {
+      $('#otpForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var formData = form.serialize();
+
+        $.ajax({
+          type: 'POST',
+          url: form.attr('action'),
+          data: formData,
+          success: function(response) {
+            // Assuming the server responds with success or error message
+            if (response === 'OTP verified successfully') {
+              // Handle success scenario: clear input field
+              $('#otp').val('');
+              // Show success toast message (you can use your preferred library for toasts)
+              showToast('success', 'OTP verified successfully');
+
+              location.href = '/profile';
+            } else {
+              // Handle error scenario: clear input field
+              $('#otp').val('');
+              // Show error toast message
+              showToast('error', 'Invalid OTP. Please try again.');
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error('Error:', error);
+            // Handle error scenario: clear input field
+            $('#otp').val('');
+            // Show error toast message
+            showToast('error', 'Error verifying OTP. Please try again later.');
+          }
+        });
+      });
+
+  $('#resendOTP').on('click', function(e) {
+    e.preventDefault();
+    var email = $('[name="email"]').val(); // Get email from hidden input field
+    $.ajax({
+      type: 'GET',
+      url: `/resend-otp/${email}`, // Endpoint for resending OTP
+      success: function(response) {
+        showToast('success', 'OTP resent successfully');
+      },
+      error: function(xhr, status, error) {
+        console.error('Error:', error);
+        showToast('error', 'Error resending OTP. Please try again later.');
+      }
+    });
+  });
+
+  // Function to show toast messages
+  function showToast(type, message) {
+    var toastClass = type === 'success' ? 'bg-success' : 'bg-danger';
+    var toastHTML = '<div class="toast ' + toastClass + ' text-white" role="alert" aria-live="assertive" aria-atomic="true">\
+                      <div class="toast-body">' + message + '</div>\
+                    </div>';
+
+    $('#toastContainer').append(toastHTML);
+    $('.toast').toast({ delay: 3000 });
+    $('.toast').toast('show');
+    $('.toast').on('hidden.bs.toast', function () {
+      $(this).remove();
+    });
+  }
+
+    });
+  </script>
+
+  <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+</body>
+</html>

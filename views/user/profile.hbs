@@ -1,16 +1,25 @@
-<!-- profile.hbs (Profile View) -->
 <h3 class="text-center mt-4">Profile</h3>
 <section class="container profile-section py-4">
-                <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
-            <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
-          </a>
+  <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
+    <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
+  </a>
   <div class="container">
     {{#if UserInfo}}
       <div class="profile-card shadow-sm p-4 rounded">
-        <h4 class="profile-item"><strong>Name:</strong> {{UserInfo.name}}</h4>
-        <h4 class="profile-item"><strong>Email:</strong> {{UserInfo.email}}</h4>
+        <h4 class="profile-item"><strong>Name: </strong> {{UserInfo.name}}</h4>
+        <div class="emailVf">
+        <h4 style="display: flex;" class="profile-item"><strong>Email: <span> </span></strong> {{UserInfo.email}} 
+          {{#if UserInfo.emailVerified}}
+          <div class="Vf_badge">
+            <img style="height: 30px;margin-left: 10px;" src="https://stockton.pythonanywhere.com/static/images/VF-removebg-preview.png" alt="">
+          </div>
+          {{else}}
+            <span> </span><a href="profile/verifyemail"> Verify</a>
+          {{/if}}
+            </div>
+        </h4>
         <h4 class="profile-item">
-          <strong>Mobile:</strong> 
+          <strong>Mobile: </strong> 
           {{#if UserInfo.mobile}}
             {{UserInfo.mobile}}
           {{else}}
