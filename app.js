@@ -1,4 +1,6 @@
+// Load environment variables from .env file
 require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -9,23 +11,16 @@ const MongoStore = require('connect-mongo');
 const fileUpload = require('express-fileupload');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
-const db = require('./config/connection');
 const hbs = require('express-handlebars');
-const mongoose = require('mongoose');
+const db = require('./config/connection');
 const app = express();
-
-// MongoDB connection
-const mongoUrl = process.env.MONGO_URL;
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
 
 // View engine setup
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
   defaultLayout: 'layout',
-  layoutsDir: path.join(__dirname, 'views/layout'),
-  partialsDir: path.join(__dirname, 'views/partials')
+  layoutsDir: path.join(__dirname, 'views', 'layout'), // Corrected directory path
+  partialsDir: path.join(__dirname, 'views', 'partials') // Corrected directory path
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -36,23 +31,30 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
+
+// Configure sessions using MongoDB as session store
 app.use(session({
-  secret: 'yourSecret',
+  secret: process.env.SESSION_SECRET || 'defaultSecret',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: mongoUrl }),
+  store: MongoStore.create({ 
+    mongoUrl: process.env.MONGO_URL || 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
+  }),
   cookie: { maxAge: 60000 }
 }));
+
+// Connect to MongoDB
 db.connect((err) => {
   if (err) {
-    console.log("Connection Error: " + err);
+    console.error("Database connection error:", err);
   } else {
-    console.log("Database Connected to port 27017");
+    console.log("Database connected successfully");
   }
 });
 
+// Define routes
 app.use('/', userRouter);
-app.use('/0a0d0m0i0n0', adminRouter);
+app.use('/admin', adminRouter); // Assuming admin routes are prefixed with '/admin'
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
