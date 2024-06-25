@@ -8,6 +8,7 @@ const Order = require("./Order"); // Adjust the path as necessary
 const collection = require("../config/collection"); // Adjust the path as necessary
 const { response } = require("express");
 const Razorpay = require('razorpay');
+const Review = require('../models/Review');
 
 
 
@@ -672,6 +673,43 @@ module.exports ={
       throw error;
     }
   },
+  UserReview: async (reviewText, userId, proId, Uname, isVerifiedBuyer) => {
+    try {
+        // Check if the user is a verified buyer
+        const order = await Order.findOne({
+            userId: userId,
+            'products.item': proId,
+            status: 'Delivered' // Assuming 'Delivered' status indicates completed orders
+        }).lean();
+
+        // Create a review object
+        const review = new Review({
+            UserId: userId,
+            ProId: proId,
+            Username: Uname,
+            reviewText: reviewText,
+            verifiedBuyer: !!order // Set verifiedBuyer based on order existence
+        });
+
+        // Save the review
+        await review.save();
+        return review; // Optionally, you can return the saved review object
+    } catch (error) {
+        console.error('Error Saving the Review:', error);
+        throw error;
+    }
+},
+
+getProductReview : async (proId) => {
+  try {
+      const reviews = await Review.find({ ProId: proId }).lean();
+      return reviews; // Return the array of reviews found
+  } catch (error) {
+      console.error('Error fetching product reviews:', error);
+      throw error;
+  }
+},
+
 
 
 };

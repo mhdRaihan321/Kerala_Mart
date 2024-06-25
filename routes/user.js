@@ -7,6 +7,7 @@ require('dotenv').config();
 const Product = require('../models/Product');
 const Handlebars = require('handlebars');
 
+
 const authenticateUser = (req, res, next) => {
   if (req.session.user && req.session.user) {
     req.user = req.session.user; // Make user information available in the request object
@@ -15,6 +16,8 @@ const authenticateUser = (req, res, next) => {
     res.redirect('/login');
   }
 };
+
+
 
 const otpStore = {}; // Store OTPs in memory for demonstration. Use a database in production.
 
@@ -574,17 +577,48 @@ router.get('/product-details/:id',authenticateUser, async (req,res)=>{
   cartCount= await userHelper.getCartCount(req.session.user._id)
   let proId = req.params.id
   let productDetailsView = await userHelper.getProductDetailsV(proId)
+  let ProReview = await userHelper.getProductReview(proId)
   console.log('Product Detils Got 323', productDetailsView);
-  res.render('user/product-details-view',{user:req.session.user , productDetailsView, cartCount})
+  console.log('Reviewer Name:' ,ProReview.Username);
+  console.log('Review:' ,ProReview.reviewText);
+  res.render('user/product-details-view',{user:req.session.user , productDetailsView, cartCount ,ProReview})
 })
 
 
 
+// Search route
+router.get('/search', async (req, res) => {
+  const searchQuery = req.query.q;
+  try {
+    const products = await Product.find({
+      $or: [
+        { mainname: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on product name
+        { dname: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on product name
+        { description: { $regex: searchQuery, $options: 'i' } } // Case-insensitive search on product description
+      ]
+    }).lean();
 
+    res.render('user/search-results', { products, searchQuery });
+  } catch (error) {
+    console.error('Error searching for products:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
+router.post('/submit-review', (req,res)=>{
+  const  UserId = req.body.UserId;
+  const  ProId = req.body.ProId;
+  const  Uname = req.body.Uname;
+  const reviewText = req.body.reviewText;
+  console.log('UserId',UserId);
+  console.log('Pro',ProId);
+  console.log('UserName',Uname);
+  console.log('Review',reviewText);
 
+  const review = userHelper.UserReview(reviewText,UserId,ProId,Uname)
+  res.json({ review: true })
 
-
+})
 
 
 

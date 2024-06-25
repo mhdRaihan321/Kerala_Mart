@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
 
-<body>
   <div class="container" style="adding: 20px;
     display: flex;
     justify-content: center;">
@@ -37,26 +27,30 @@
           <h4 class="product-title">{{productDetailsView.dname}}</h4>
           <hr />
           <span class="badge text-bg-danger" style="padding: 7px; font-weight: bold;">Limited time deal</span>
-          <p class="product-price"><span style="color: red;">-40%</span> ₹{{productDetailsView.price}}</p>
+          <p class="product-price"><span style="color: red;">-{{productDetailsView.offerPrice}}%</span> ₹{{productDetailsView.price}}</p>
           <span style="font-size: smaller; color: #4f4b4b;">M.R.P.: <span
-              style="text-decoration: line-through;">₹2999</span></span>
+              style="text-decoration: line-through;">₹{{productDetailsView.mrp}}</span></span>
           <p class="ExDelevery">Free Delivery : <span id="demo"></span>, <span id="demos"></span> <span
               id="demosY"></span></p>
           <button style="padding-left: 51px; padding-right: 51px; margin-right: 10px;" type="button"
-            onclick="addtoCart('{{productDetailsView._id}}')" class="btn btn-primary mt-auto">Add To Cart</button>
-          <a href="/buynow/{{productDetailsView._id}}"
-            style="padding-left: 51px; padding-right: 51px; margin-right: 10px; margin-top: 10px;" type="button"
-            onclick="" class="btn btn-primary mt-3">Buy Now</a>
+            onclick="addtoCart('{{productDetailsView._id}}')" class="btn btn-primary mt-auto">Add To Cart <i class="fa-solid fa-cart-shopping fa-lg"></i></button>
           <div class="our-req" style="display: flex; flex-direction: row;    margin-top: 45px;">
             <div class="retrun mr-3">
+              <strong>
               <p style="margin-right: 12px;">10 days <br /> Replacement</p>
+                          </strong>
             </div>
             <div class="freede">
+                           <strong>
               <p style="margin-right: 12px;">Free <br /> Delivery</p>
+                          </strong>
             </div>
             <div class="refund">
+                           <strong>
               <p style="margin-right: 12px;">100% <br /> Refund</p>
+                          </strong>
             </div>
+            </strong>
           </div>
           <hr>
           <div class="BrandInfo">
@@ -69,13 +63,63 @@
           </div>
         </div>
       </div>
-      <div class="review">
-        <label for="review">Review</label>
-        <div class="reviewwithsendbtn" style="display: flex; flex-direction: row;">
-        <input type="text" id="review" class="form-control" placeholder="Tell Your Experience">
-        <button class="btn btn-primary" style="padding-left: 15px;padding-top: 7px;padding-right: 15px;margin-left: 10px; padding-bottom: 7px;"><i  class="fa-solid fa-paper-plane fa-xl"></i> </button>
-        </div>
-      </div>
+<div class="review">
+<form id="reviewForm">
+  <label for="review">Review</label>
+  <div class="reviewwithsendbtn" style="display: flex; flex-direction: row;">
+    <input type="text" name="ProId" value="{{productDetailsView._id}}" id="ProId" hidden>
+    <input type="text" name="UserId" value="{{user._id}}" id="UserId" hidden>
+    <input type="text" name="Uname" value="{{user.name}}" id="Uname" hidden>
+    <input type="text" id="reviewText" class="form-control" name="reviewText" placeholder="Tell Your Experience">
+    <button type="submit" class="btn btn-primary" style="padding-left: 15px; padding-top: 7px; padding-right: 15px; margin-left: 10px; padding-bottom: 7px;">
+      <i class="fa-solid fa-paper-plane fa-xl"></i> Submit
+    </button>
+  </div>
+</form>
+<div class="review-lister">
+  {{#if ProReview}}
+    <h3>Product Reviews</h3>
+    <ul class="review-list">
+      {{#each ProReview}}
+        <li>
+          <div class="review-item">
+            <div class="profile-image">
+              <!-- Placeholder profile image -->
+              <img src="https://via.placeholder.com/60x60.png/000000/ffffff?text=Profile+Image" alt="Profile Image">
+            </div>
+            <div class="review-content">
+              <!-- Reviewer's name and formatted date -->
+              <p><strong>{{this.Username}}</strong> - {{formatDate this.createdAt}} <span> 
+                   {{#if this.verifiedBuyer}}
+              <!-- Check if the current review author is a verified buyer -->
+                <span class="badge rounded-pill text-bg-success" style="color: #f0c14b;">Verified Buyer <i class="fa-solid fa-check fa-lg" style="color: #ffff00;"></i></span>
+              {{else}}
+                <span  class="badge rounded-pill text-bg-warning" >Not a Buyer</span>
+              {{/if}}</span></p>
+              
+
+              
+              <!-- Review text -->
+              <p>{{this.reviewText}}</p>
+            </div>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <!-- Display message if no reviews available -->
+    <p>No reviews available for this product.</p>
+  {{/if}}
+</div>
+
+
+
+
+
+
+
+</div>
+
               </div>
       <hr>
     </div>
@@ -103,6 +147,8 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+
   <script>
     function addtoCart(proId) {
       $.ajax({
@@ -146,6 +192,43 @@
     }
 
     document.addEventListener("DOMContentLoaded", GetDate);
+    
+  $(document).ready(function() {
+  // Handle form submission
+  $('#reviewForm').submit(function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Get form data
+    var formData = {
+      reviewText: $('#reviewText').val(), // Get review text
+      UserId: $('#UserId').val(), // Get user ID
+      ProId: $('#ProId').val(), // Get product ID
+      Uname: $('#Uname').val() // Get username
+    };
+    
+    // Send AJAX request
+    $.ajax({
+      url: '/submit-review', // Replace with your endpoint URL
+      method: 'POST',
+      data: formData,
+      success: function(response) {
+        // Handle success response
+        console.log('Review submitted successfully:', response);
+        alert('Review submitted successfully');
+        location.reload()
+        // Optionally show a message or update UI
+      },
+      error: function(error) {
+        // Handle error
+        console.error('Error submitting review:', error);
+        // Optionally show an error message
+      }
+    });
+  });
+});
+
+
+
   </script>
 
   <style>
@@ -301,8 +384,57 @@ font-size: 1.25rem;
       ;
     }
 
-    .review input {
-  </style>
-</body>
+ .review input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+    .review-lister {
+  margin-top: 20px;
+}
 
-</html>
+.review-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.profile-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 15px;
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-content {
+  flex: 1;
+}
+
+.review-item p {
+  margin: 5px 0;
+}
+
+.review-item strong {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.review-item .review-text {
+  margin-top: 5px;
+}
+
+  </style>

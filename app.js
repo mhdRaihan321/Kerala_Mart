@@ -40,6 +40,7 @@ app.use(session({
   saveUninitialized: true,
   store: MongoStore.create({ 
     mongoUrl: process.env.MONGO_URL || 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
+    
   }),
   cookie: { maxAge: 600000 }
 }));

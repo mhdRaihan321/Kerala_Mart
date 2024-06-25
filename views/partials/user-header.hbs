@@ -2,7 +2,7 @@
 <header class="headerofuser">
   <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/"><img style=" height: 35px;" src="https://stockton.pythonanywhere.com/static/images/Screenshot_2024-06-23_213238-removebg-preview.png" alt=""><span> </span>Kerala Mart</a>
+      <a class="navbar-brand" href="/"><img style="height: 35px;" src="https://stockton.pythonanywhere.com/static/images/Screenshot_2024-06-23_213238-removebg-preview.png" alt=""><span> </span>Kerala Mart</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -14,7 +14,7 @@
           </li>
           <li class="nav-item">
             <a class="btn btn-outline-warning nav-link position-relative" id="CartofUser" onclick="cartButtonClicked()" href="/cart">
-             <i class="fa-solid fa-cart-shopping fa-lg"></i> <span> </span><span id="cartcount" class="badge bg-none">{{cartCount}}</span>
+              <i class="fa-solid fa-cart-shopping fa-lg"></i> <span> </span><span id="cartcount" class="badge bg-none">{{cartCount}}</span>
             </a>
           </li>
           {{#if user}}
@@ -27,6 +27,11 @@
           </li>
           {{/if}}
         </ul>
+  <form class="d-flex mx-auto search-bar" action="/search" method="GET">
+    <input class="form-control me-2" type="search" name="q" placeholder="Search for products..." aria-label="Search">
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+  </form>
+
         <div class="d-flex justify-content-end">
           <div class="dropdown">
             <button class="btn btn-dark text-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -38,7 +43,7 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               {{#if user}}
-              <li><a class="dropdown-item text-light" href="/profile"> <i class="fa-regular fa-user"></i>  Profile</a></li>
+              <li><a class="dropdown-item text-light" href="/profile"> <i class="fa-regular fa-user"></i> Profile</a></li>
               <li><a class="dropdown-item text-light" href="/logout"> <i class="fa-solid fa-right-to-bracket fa-rotate-180"><span></span></i> Logout</a></li>
               {{else}}
               <li><a class="dropdown-item text-light" href="/login"><i class="fa-solid fa-right-from-bracket"></i><span></span> Login</a></li>
@@ -52,7 +57,6 @@
 </header>
 
 <style>
-
   .headerofuser {
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -71,7 +75,7 @@
     color: black;
     font-size: medium;
     top: -9px;
-}
+  }
   .btn-outline-warning {
     color: #ffc107;
     border-color: #ffc107;
@@ -95,7 +99,7 @@
     color: #fff;
   }
   .dropdown-item.text-danger {
-      background-color: #6c757d;
+    background-color: #6c757d;
     color: #fff;
   }
   .dropdown-item.text-success {
@@ -105,13 +109,26 @@
   .dropdown-item.text-dark {
     background-color: #6c757d;
     color: #fff;
-  }. .dropdown-item.text-success:hover{
-     background-color: #28a745;
+  }
+  .dropdown-item.text-success:hover {
+    background-color: #28a745;
     color: #fff;
   }
   .dropdown-item.text-danger:hover,
   .dropdown-item.text-dark:hover {
     background-color: #d6c8c9;
     color: white; 
-    }
+  }
+  .search-bar {
+    max-width: 500px;
+    width: 100%;
+  }
+  .search-bar input {
+    width: 80%;
+    border-radius: 20px 0 0 20px;
+    border: 1px solid #ced4da;
+  }
+  .search-bar button {
+    border-radius: 0 20px 20px 0;
+  }
 </style>
