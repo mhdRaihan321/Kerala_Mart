@@ -340,7 +340,8 @@ module.exports ={
                 $push: {
                   productId: "$products.item",
                   quantity: "$products.quantity",
-                  productName: "$productDetails.mainname"
+                  productName: "$productDetails.mainname",
+                  productImage: "$productDetails.imageUrl"  // Assuming the image field is called 'image'
                 }
               }
             }
@@ -366,7 +367,7 @@ module.exports ={
         reject(error);
       }
     });
-  },
+  },  
   getOrderProducts: (orderId) => {
     return new Promise(async (resolve, reject) => {
         try {

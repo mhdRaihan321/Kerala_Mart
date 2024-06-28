@@ -42,7 +42,7 @@ app.use(session({
     mongoUrl: process.env.MONGO_URL || 'mongodb+srv://mhdraihan383:KTif7xvCBa3FM2G9@keralamart.pw7bdim.mongodb.net/Shopping?retryWrites=true&w=majority'
     
   }),
-  cookie: { maxAge: 600000 }
+  cookie: { maxAge: 6000000 }
 }));
 
 // Connect to MongoDB

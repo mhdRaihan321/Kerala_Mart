@@ -1,91 +1,66 @@
-<!-- orders.handlebars -->
 <section>
   {{#if orders.length}}
-  <div class="container mt-5">
+  <div class="containeroforders mt-5">
     <a href="/" class="btn btn-warning mb-4 text-dark" style="font-weight: bold;">
       <i class="fa-regular fa-circle-left fa-xl" style="color: #000000;"></i> Back
     </a>
     <h1 class="text-center mb-4">Your Orders</h1>
-    <table class="table table-striped table-hover mt-5" id="productsTable">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">No</th>
-          <th scope="col">Date</th>
-          <th scope="col">Item Name</th>
-          <th scope="col">Quantity</th>
-          <th scope="col">Address</th>
-          <th scope="col">Mobile</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Payment</th>
-          <th scope="col">Status</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each orders}}
-        <tr>
-          <th scope="row">{{@index}}</th>
-          <td>{{formatDate this.createdAt}}</td>
-          <td>
-            {{#each this.products}}
-              <p>{{this.productName}}</p>
-            {{/each}}
-          </td>
-          <td>
-            {{#each this.products}}
-              <p>{{this.quantity}}</p>
-            {{/each}}
-          </td>
-          <td>{{this.deliveryDetails.address}}</td>
-          <td>{{this.deliveryDetails.mobile}}</td>
-          <td>{{this.total}}₹</td>
-          <td>{{this.paymentMethod}}</td>
-          <td>{{this.status}}</td>
-          <td>
-            {{#if (isCancelled this.status)}}
-            <span class="text-danger font-weight-bold">Cancelled Item Refund Is Going On</span>
-            {{else}}
-            <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a>
-            {{/if}}
-          </td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
+    <div class="orders-list">
+      {{#each orders}}
+      <div class="order-card mb-3 p-3 shadow-sm">
+        <div class="order-header d-flex justify-content-between align-items-center mb-2">
+          {{!-- <h2>Order #{{@index}}</h2> --}}
+          <p><strong>Date:</strong> {{formatDate this.createdAt}}</p>
+        </div>
+        <div class="order-details">
+          <div class="order-products">
+            <h3>Items:</h3>
+            <ul class="list-group">
+              {{#each this.products}}
+              <li class="list-group-item d-flex align-items-center">
+                <img src="{{this.productImage}}" class="img-thumbnail" style="width: 250px; height: 250px;" alt="">
+                <div class="ml-3">
+                  <p><strong>Product Name:</strong> {{this.productName}}</p>
+                  <p><strong>Quantity:</strong> {{this.quantity}}</p>
+                </div>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          <div class="order-info mt-3">
+            <p><strong>Address:</strong> {{this.deliveryDetails.address}}</p>
+            <p><strong>Mobile:</strong> {{this.deliveryDetails.mobile}}</p>
+            <p><strong>Expected Delivery:</strong> {{calculateDeliveryDate this.createdAt}}</p>
+            <p><strong>Total Amount:</strong> ₹{{this.total}}</p>
+            <p><strong>Payment Method:</strong> {{this.paymentMethod}}</p>
+            <p><strong>Status:</strong> {{this.status}}</p>
+          </div>
+        </div>
+        <div class="order-actions mt-3">
+          {{#if (isCancelled this.status)}}
+          <span class="text-danger font-weight-bold">Cancelled Item Refund Is Going On</span>
+          {{else}}
+          <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
   </div>
   {{else}}
-  <div class="row" style="margin-top: 100px; display: flex; align-items: center; flex-direction: column;">
-    <h1 class="text-center font-weight-bold" style="font-size: xx-large;">Order is empty</h1>
-    <br>
-    <a style="max-width: 140px;" href="/" class="btn btn-primary text-center">Back To Home</a>
+  <div class="row empty-orders">
+    <h1 class="text-center font-weight-bold">Order is empty</h1>
+    <a href="/" class="btn btn-primary text-center mt-3">Back To Home</a>
   </div>
   {{/if}}
 </section>
 
-<script>
-$(document).ready( function () {
-    $('#productsTable').DataTable();
-});
-</script>
-
 <style>
-  div.dt-container select.dt-input {
-    padding: 4px;
-    margin-right: 10px;
-}
-  div.dt-container .dt-search input {
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    padding: 5px;
-    background-color: transparent;
-    color: inherit;
-    margin-left: 8px;
-  }
-  .container {
+  .containeroforders {
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
-    box-shadow:1px 10px 4px 13px rgb(240 2 2 / 10%);
+    box-shadow: 1px 10px 4px 13px rgb(240 2 2 / 10%);
   }
 
   h1 {
@@ -93,13 +68,70 @@ $(document).ready( function () {
     color: #343a40;
   }
 
-  .table {
-    margin-top: 20px;
+  .orders-list {
+    display: flex;
+    flex-direction: column;
   }
 
-  .thead-dark th {
-    background-color: #343a40;
-    color: #fff;
+  .order-card {
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .order-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #343a40;
+  }
+
+  .order-header p {
+    margin: 0;
+    color: #6c757d;
+  }
+
+  .order-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .order-products h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+    color: #343a40;
+  }
+
+  .order-products ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .order-products li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .order-products li img {
+    margin-right: 20px;
+  }
+
+  .order-products li p {
+    margin: 0;
+    color: #6c757d;
+  }
+
+  .order-info p {
+    margin: 5px 0;
+    color: #6c757d;
+  }
+
+  .order-actions {
+    margin-top: 10px;
   }
 
   .btn-primary {
@@ -131,5 +163,51 @@ $(document).ready( function () {
 
   .text-dark {
     color: #343a40 !important;
+  }
+
+  .empty-orders {
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .empty-orders h1 {
+    font-size: xx-large;
+  }
+
+  @media (max-width: 768px) {
+    .containeroforders {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .order-card {
+      padding: 10px;
+    }
+
+    .order-header h2 {
+      font-size: 1.25rem;
+    }
+
+    .order-products h3 {
+      font-size: 1rem;
+    }
+
+    .empty-orders h1 {
+      font-size: 1.5rem;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .order-products li img {
+      width: 80px;
+      height: 80px;
+    }
   }
 </style>

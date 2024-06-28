@@ -65,7 +65,7 @@
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
-    box-shadow:1px 10px 4px 13px rgb(240 2 2 / 10%);
+    box-shadow: 1px 10px 4px 13px rgb(240 2 2 / 10%);
   }
 
   h1 {
@@ -75,6 +75,7 @@
 
   .table {
     margin-top: 20px;
+    overflow-x: auto;
   }
 
   .thead-dark th {
@@ -150,5 +151,33 @@
 
   .empty-cart a {
     max-width: 140px;
+  }
+
+  @media (max-width: 768px) {
+    .containerss {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .table {
+      margin-top: 10px;
+    }
+
+    .total-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .total-amount {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
   }
 </style>

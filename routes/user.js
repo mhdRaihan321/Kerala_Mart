@@ -418,6 +418,9 @@ router.get('/orders', authenticateUser, async (req, res) => {
     const orders = await userHelper.getUserOrders(userId);
     const cancelledOrders = orders.filter(order => order.status === 'cancelled');
     const cartCount = await userHelper.getCartCount(userId);
+    // Assuming 'orders' is an array of order objects fetched from your database
+    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     
     console.log('User Orders in user.js:', JSON.stringify(orders, null, 2));
     res.render('user/orders', {
