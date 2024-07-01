@@ -647,14 +647,9 @@ background-color: #ffffff;
     <div class="notification-container">
         <h2>Success!</h2>
         <p>Password reset Successfully!.</p>
-       <button class="btn btn-success" id = 'onClick'onclick="onClick()">Reset Password</button>
+       <a href="/login" class='btn btn-success' >Login Now</a>
     </div>
 </body>
-<script>
- $('#onClick').on('click', function () {
-                            location.href = '/login'
-                    });
-</script>
 </html>
 `;
 
