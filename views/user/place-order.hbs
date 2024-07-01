@@ -2,7 +2,6 @@
     <div class="container mt-5">
         <form action="" id="checkout-form">
             <div class="row">
-
                 <div class="col-md-6">
                     <h2>Enter Delivery Details</h2>
                     <div class="form-group">
@@ -24,9 +23,18 @@
                     </div>
                     <input type="hidden" name="userId" value="{{user._id}}">
                 </div>
-
+                {{#if cartProducts.length}}
                 <div class="col-md-4">
                     <div class="container mt-5 ml-5 checkout">
+                        <div id="product-details">
+                            <h5>Product Details:</h5>
+                            <ul id="product-list">
+                                {{#each cartProducts}}
+                                    <input hidden type="hidden" id="ProIdForReOrder" value="{{this.item}}">
+                                <li>{{this.productDetails.mainname}} - Quantity: {{this.quantity}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
                         <h5>Total Amount: Rs.{{total}}</h5>
                         <hr>
                         <div class="payment">
@@ -43,7 +51,10 @@
                         </div>
                     </div>
                 </div>
-
+                {{else}}
+                <h2>No Product</h2>
+                <button class="btn btn-warning" id="PayError">Continue</button>
+                {{/if}}
             </div>
         </form>
     </div>
@@ -69,36 +80,52 @@
             // Confirm order placement with selected payment method
             const confirmationMessage = `Are you sure you want to place the order with ${paymentMethod} payment method?`;
 
-            if (confirm(confirmationMessage)) {
+                if (confirm(confirmationMessage)) {
                 $.ajax({
                     url: '/place-order',
                     method: 'post',
                     data: $('#checkout-form').serialize(),
                     success: (response) => {
-                        if (response.CodSuccess) {
-                            location.href = '/0o0r0d0e0r0P0l0a0c0e0d';
-                        } else {
-                            razorPayPayment(response);
-                        }
+                    if (response.CodSuccess) {
+                        location.href = '/0o0r0d0e0r0P0l0a0c0e0d';
+                    } else if (response.OrderDForPlacemet) {
+                        console.log("Response Amount: ", response.OrderDForPlacemet.amount);
+                        console.log("Response: ", response.OrderDForPlacemet);
+                        razorPayPayment(response.OrderDForPlacemet);
+                    }else if (response.products) {
+
+}
+
                     },
                     error: (err) => {
-                        console.error('Error placing order:', err);
-                        alert('Error placing order. Please try again.');
-                    }
+                    console.error('Error placing order:', err);
+                    alert('Error placing order');  
+                         $('#noProductInCart').modal('show');
+                    $('#reOrderThatProduct').on('click', function () {
+                        const proId = document.getElementById('ProIdForReOrder').innerHTML;
+                            location.href = `/product-details/${proId}`;
+                    });
+                                        }
                 });
-            } else {
+                }
+                else {
                 // User cancelled the order
                 console.log('Order placement cancelled.');
             }
         });
     });
-
+                        $('#PayError').on('click', function () {
+                             $('#noProductInCart').modal('show');
+                                                 $('#reOrderThatProduct').on('click', function () {
+                            location.href = `/`;
+                    });
+                    });
     function razorPayPayment(order) {
         var options = {
             "key": "rzp_test_HSGXHXFayRD319", // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR.
             "currency": "INR",
-            "name": "kerala Mart",
+            "name": "Kerala Mart",
             "description": "Order Payment",
             "image": "https://stockton.pythonanywhere.com/static/images/Kerala_Mart.jpg",
             "order_id": order.id, // Pass the `id` obtained in the response of Step 1
@@ -106,18 +133,33 @@
                 verifyPayment(response, order);
             },
             "prefill": {
-                "name": "",
-                "email": "gaurav.kumar@example.com",
-                "contact": "9000090000"
+                "name": "Raihan",
+                "email": "",
+                "contact": "" 
             },
             "notes": {
-                "address": "Razorpay Corporate Office"
+                "address": "Kerala Mart Office"
             },
             "theme": {
                 "color": "#007bff"
             }
         };
         var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response){
+            $('#removeCartItemModal').modal('show');
+            descripctionPay = document.getElementById('descripctionPay').innerHTML = response.error.description
+            descripctionPay = document.getElementById('resonPay').innerHTML = response.error.reason
+            descripctionPay = document.getElementById('usedWayPay').innerHTML = response.error.source
+
+            
+           /* alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);*/
+        });
         rzp1.open();
     }
 
@@ -131,14 +173,13 @@
             },
             success: (response) => {
                 if(response.status){
-                    location.href = '/0o0r0d0e0r0P0l0a0c0e0d';
+                    location.href = `/0o0r0d0e0r0P0l0a0c0e0d`;
                 }
                 // Redirect to order success page or show success message
             },
             error: (err) => {
-                console.error('Error verifying payment:', err  ,"Try Again");
-                alert('Payment verification failed. Please contact support. , Try Again');
-                var rzp1 = new Razorpay(options);
+                console.error('Error verifying payment:', err);
+                alert('Payment verification failed. Please contact support. Try Again.');
             }
         });
     }
@@ -149,47 +190,39 @@
         background-color: #f8f9fa;
         font-family: Arial, sans-serif;
     }
-.footer{
-  display: none;
-}
+    .footer {
+        display: none;
+    }
     .container {
         max-width: 960px;
     }
-
     .mt-5 {
         margin-top: 3rem !important;
     }
-
     .checkout {
         background-color: #f3f0f0;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     }
-
     .payment {
         padding-bottom: 16px;
     }
-
     .btn-primary {
         background-color: #007bff;
         border: none;
         border-radius: 25px;
         transition: background-color 0.3s;
     }
-
     .btn-primary:hover {
         background-color: #0056b3;
     }
-
     input[type="radio"] {
         margin-right: 8px;
     }
-
     .form-check-label {
         font-size: 0.875rem;
     }
-
     .form-text {
         font-size: 0.875rem;
         color: #6c757d;

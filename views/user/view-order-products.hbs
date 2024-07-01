@@ -43,20 +43,21 @@
           <h6><strong>Delivery Pincode: </strong> {{deliveryAddress.pincode}}</h6>
           <h6><strong>Total Amount: </strong>₹{{ordertotal}}</h6>
         </div>
-        <div class="PaidorNot">
-          {{#if PaidOrNot }}
-          <Button class="btn btn-success">Already Paid</Button>
-          <p class="text-success"><strong>Already Paid Door Step Delivery</strong></p>
-          {{else}}
-          <form action="" id="checkout-paynow">
-            <input type="hidden" name="orderId" value="{{orderId}}">
-            <input type="hidden" name="ordertotal" value="{{ordertotal}}">
-            <input type="hidden" name="paymethod" value="ONLINE">
-            <button class="btn btn-warning" type="submit">Pay Now</button>
-          </form>
-          <p class="" style="color: rgb(0, 52, 240);"><strong>Pay Now And Get Door Step Delivery</strong></p>
-          {{/if}}
-        </div>
+          <div class="PaidorNot">
+            {{#if PaidOrNot }}
+            <button class="btn btn-success">Already Paid</button>
+            <p class="text-success"><strong>Already Paid Door Step Delivery</strong></p>
+            {{else}}
+            <form action="" id="checkout-paynow">
+              <input type="hidden" name="orderId" value="{{orderId}}">
+              <input type="hidden" name="ordertotal" value="{{ordertotal}}">
+              <input type="hidden" name="paymethod" value="ONLINE">
+              <button class="btn btn-warning" type="submit">Pay Now</button>
+            </form>
+            <p style="color: rgb(0, 52, 240);"><strong>Pay Now And Get Door Step Delivery</strong></p>
+            {{/if}}
+          </div>
+
         <h6 class="mt-2"><strong>Track Order : </strong>{{orderStatus}}</h6>
         <h6><strong>Expected Delivery Date: </strong>{{calculateDeliveryDate createdAt}}</h6>
         <div class="button-group">
@@ -102,7 +103,7 @@
               const userD = {
                 name: "{{user.name}}",
                 email: "{{user.email}}",
-                mobile: "{{user.contact}}",
+                mobile: "{{user.mobile}}",
               };
               
               razorPayPayment(response, userD);
@@ -140,7 +141,7 @@
           "contact": userD.contact
         },
         "notes": {
-          "address": ""
+          "address": "Kerala Mart Office"
         },
         "theme": {
           "color": "#007bff"

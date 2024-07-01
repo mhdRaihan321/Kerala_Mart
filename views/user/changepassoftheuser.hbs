@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Change</title>
+    <style>
+        .containerofchnagepass {
+            max-width: 400px;
+            margin-bottom: auto;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 100px;
+            background: #a59f9f;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .headingofchpas {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="containerofchnagepass">
+    <h class="headingofchpas">Password Change</h2>
+    <form id="passwordChangeForm">
+        <label class="labelofchpas" for="oldPassword">Old Password</label>
+        <input  class="inputofchpas" type="password" id="oldPassword" name="oldPassword" required>
+        
+        <label  class="labelofchpas" for="newPassword">New Password</label>
+        <input class="inputofchpas" type="password" id="newPassword" name="newPassword" required>
+        
+        <input type="submit" value="Change Password">
+    </form>
+    <div id="message"></div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#passwordChangeForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let oldPassword = $('#oldPassword').val();
+            let newPassword = $('#newPassword').val();
+            console.log("Old", oldPassword);
+            console.log("New", newPassword);
+
+            $.ajax({
+                type: 'POST',
+                url: '/profile/changepass/change-pass-for-the-email',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                }),
+                success: function(response) {
+                    $('#message').text(response.message);
+                    if (response.success) {
+                        $('#message').css('color', 'green');
+                        location.href = '/porfile'
+                    } else {
+                        $('#message').css('color', 'red');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#message').text('An error occurred: ' + error);
+                    $('#message').css('color', 'red');
+                }
+            });
+
+        });
+    });
+</script>
+
+</html>

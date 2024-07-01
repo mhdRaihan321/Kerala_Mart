@@ -150,7 +150,7 @@ module.exports ={
         }
       ]).exec()
         .then(cartItems => {
-          console.log('Cart Items:', JSON.stringify(cartItems, null, 2)); // Log the full structure
+          console.log('Cart Items:', cartItems); // Log the full structure
 
           // Filter out invalid items (e.g., where productDetails is null)
           const validCartItems = cartItems.filter(item => item.productDetails);
@@ -270,10 +270,13 @@ module.exports ={
   placeOrder: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
       try {
-        let status = order.paymethod === 'COD' ? 'Placed' : 'Pending';
+        let status = order.paymethod === 'COD' ? 'Placed' : 'NotPaid';
+
+          
+        if(products.length > 0){
 
         // Get current date and extract only day, month, and year
-        let orderObj = {
+        var orderObj = {
           deliveryDetails: {
             name: order.name,
             mobile: order.mobile,
@@ -296,8 +299,12 @@ module.exports ={
 
         // Remove the cart after placing the order
         await Cart.deleteOne({ user: new ObjectId(order.userId) });
-
         resolve(savedOrder._id.toString()); // Return the order ID as a string
+      }
+      else{
+      console.log("No Product To Make Order")
+      resolve({NoProduct:true})
+      }
       } catch (error) {
         reject(error);
       }
@@ -308,7 +315,13 @@ module.exports ={
   getCartProductList: (userId) => {
     return new Promise(async (resolve, reject) => {
       let Carts = await Cart.findOne({ user: new ObjectId(userId) })
-      resolve(Carts.products)
+      if (Carts) {
+        console.log("Product For Order",Carts.products);
+        resolve(Carts.products)
+      }else{
+        console.log("No Product in The Cart");
+        resolve({ProductsinCart : false})
+      }
     })
   },
   getUserOrders : (userId) => {
@@ -440,6 +453,7 @@ module.exports ={
             reject(err);
           } else {
             console.log('New Order:', order);
+            console.log('New Order Amount:', order.amount);
             resolve(order);
           }
         });
@@ -449,6 +463,7 @@ module.exports ={
       }
     });
   },
+
   cancelItem : async (orderId, productId) => {
     try {
       const order = await Order.findOne({ _id: orderId }).lean();
@@ -710,7 +725,27 @@ getProductReview : async (proId) => {
       throw error;
   }
 },
+changeUserPassword : async (userId, passWords) => {
+  try {
+      const user = await User.findById(userId);
+      if (!user) {
+          return { success: false, message: 'User not found' };
+      }
 
+      const isMatch = await bcrypt.compare(passWords.oldPassword, user.password);
+      if (!isMatch) {
+          return { success: false, message: 'Old password is incorrect' };
+      }
+
+      const newHashedPassword = await bcrypt.hash(passWords.newPassword, 10);
+      user.password = newHashedPassword;
+      await user.save();
+
+      return { success: true };
+  } catch (error) {
+      return { success: false, message: 'An error occurred' };
+  }
+},
 
 
 };

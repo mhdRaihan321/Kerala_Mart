@@ -18,7 +18,7 @@
             <ul class="list-group">
               {{#each this.products}}
               <li class="list-group-item d-flex align-items-center">
-                <img src="{{this.productImage}}" class="img-thumbnail" style="width: 250px; height: 250px;" alt="">
+                <img src="{{this.productImage}}" class="img-thumbnail" style="object-fit: scale-down; width: 250px; height: 250px;" alt="">
                 <div class="ml-3">
                   <p><strong>Product Name:</strong> {{this.productName}}</p>
                   <p><strong>Quantity:</strong> {{this.quantity}}</p>
@@ -34,11 +34,18 @@
             <p><strong>Total Amount:</strong> ₹{{this.total}}</p>
             <p><strong>Payment Method:</strong> {{this.paymentMethod}}</p>
             <p><strong>Status:</strong> {{this.status}}</p>
+            {{#if (isNotPaid this.status)}}
+            <strong><span style="color: red;">You Can Pay it From The View Products</span></strong>
+            {{/if}}
           </div>
         </div>
         <div class="order-actions mt-3">
           {{#if (isCancelled this.status)}}
-          <span class="text-danger font-weight-bold">Cancelled Item Refund Is Going On</span>
+          {{#if (isOnlinePay this.paymentMethod)}}
+          <span class="text-danger font-weight-bold">Item Cancelled Refund Will in 6 Working Days!</span>
+          {{else}}
+          <span class="text-danger font-weight-bold">Item Cancelled!</span>
+          {{/if}}
           {{else}}
           <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a>
           {{/if}}

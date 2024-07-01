@@ -52,7 +52,7 @@
         <div class="col-md-3 col-sm-6 mb-4">
           <h5 class="text-uppercase">Let Us Help You</h5>
           <ul class="list-unstyled">
-            <li><a href="#" class="text-white">Your Account</a></li>
+            <li><a href="/profile" class="text-white">Your Account</a></li>
             <li><a href="#" class="text-white">Returns Centre</a></li>
             <li><a href="#" class="text-white">100% Purchase Protection</a></li>
             <li><a href="#" class="text-white">Help</a></li>
@@ -186,6 +186,47 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" id="confirmRemoveCartItem">Remove</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="FailedPayment" tabindex="-1" aria-labelledby="removeCartItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeCartItemModalLabel">Payment Failed!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-weight: bold;">
+        <p id="descripctionPay">!</p>
+        <p id="resonPay">!</p>
+        <p id="usedWayPay">!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retry</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="noProductInCart" tabindex="-1" aria-labelledby="removeCartItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeCartItemModalLabel">You Have a Problem</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-weight: bold;">
+
+        <p id=""><u>-Problem-</u></p>
+        <p id="">1. You Refreshed This Site</p>
+        <p id="">2. You Didn't Respone For a Long Time</p>
+        <p id="">3 .Session Expired</p>
+        <p id=""><u>-Solution-</u></p>
+        <p id="">---The Product Will be in That Order list You Can Pay From There Also!---</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="reOrderThatProduct" data-bs-dismiss="modal">Go to Home</button>
       </div>
     </div>
   </div>
